@@ -1,0 +1,36 @@
+workload,stage,op,count
+effects K=20,as_written,dml.effect,20
+effects K=20,decomposed,dml.cate,20
+effects K=20,decomposed,dml.scale,20
+effects K=20,cse,dml.cate,1
+effects K=20,cse,dml.scale,20
+effects K=20,lowered,linalg.fill,1
+effects K=20,lowered,linalg.generic,20
+effects K=20,lowered,linalg.matvec,1
+intervals K=20,as_written,dml.effect_interval,20
+intervals K=20,decomposed,dml.axpby,40
+intervals K=20,decomposed,dml.cate,20
+intervals K=20,decomposed,dml.cate_stderr,20
+intervals K=20,cse,dml.axpby,40
+intervals K=20,cse,dml.cate,1
+intervals K=20,cse,dml.cate_stderr,1
+intervals K=20,lowered,linalg.fill,3
+intervals K=20,lowered,linalg.generic,42
+intervals K=20,lowered,linalg.matmul,1
+intervals K=20,lowered,linalg.matvec,1
+ate M=25 K=8,as_written,dml.ate,200
+ate M=25 K=8,decomposed,dml.ate_from_mean,200
+ate M=25 K=8,decomposed,dml.col_mean,200
+ate M=25 K=8,cse,dml.ate_from_mean,200
+ate M=25 K=8,cse,dml.col_mean,1
+ate M=25 K=8,lowered,linalg.dot,200
+ate M=25 K=8,lowered,linalg.fill,201
+ate M=25 K=8,lowered,linalg.generic,2
+ate M=25 K=8 (no pushdown),as_written,dml.ate,200
+ate M=25 K=8 (no pushdown),decomposed,dml.cate,200
+ate M=25 K=8 (no pushdown),decomposed,dml.mean_scale,200
+ate M=25 K=8 (no pushdown),cse,dml.cate,25
+ate M=25 K=8 (no pushdown),cse,dml.mean_scale,200
+ate M=25 K=8 (no pushdown),lowered,linalg.fill,225
+ate M=25 K=8 (no pushdown),lowered,linalg.generic,200
+ate M=25 K=8 (no pushdown),lowered,linalg.matvec,25

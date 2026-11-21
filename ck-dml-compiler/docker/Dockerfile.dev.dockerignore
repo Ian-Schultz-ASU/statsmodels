@@ -1,0 +1,4 @@
+# Build context for Dockerfile.dev: the image only needs the pin file.
+# Ignore everything, then allow that one file back in.
+*
+!requirements.txt

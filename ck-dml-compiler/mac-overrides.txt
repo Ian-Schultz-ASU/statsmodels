@@ -1,0 +1,8 @@
+# Version overrides for a local Python venv on an Intel Mac. Not used by Docker.
+# Newer numba and llvmlite (pulled in by econml) ship no Intel Mac wheels, so pip
+# would try to build llvmlite from source and fail. These are the last versions
+# with Intel Mac wheels; numba 0.62.1 needs numpy below 2.4.
+# Use with:  uv pip install -r requirements.txt --override mac-overrides.txt
+numpy==2.3.5
+numba==0.62.1
+llvmlite==0.45.1

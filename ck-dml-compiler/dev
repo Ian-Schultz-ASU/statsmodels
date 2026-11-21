@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# Run a command inside the toolchain container, with the repo mounted at /work.
+#
+#   ./dev make build     build dml-opt
+#   ./dev make test      FileCheck tests + pytest
+#   ./dev bash           interactive shell
+#
+# The image is built on first use. All Docker files live in docker/.
+set -euo pipefail
+
+# Always resolve paths from the repo root, wherever the script was called from
+cd "$(dirname "$0")"
+
+# With a terminal attached: run normally, so ./dev bash is interactive
+if [ -t 0 ]; then
+  exec docker compose -f docker/compose.yaml run --rm dev "$@"
+fi
+
+# Without a terminal (pipes, scripts): -T tells compose not to allocate one
+exec docker compose -f docker/compose.yaml run --rm -T dev "$@"
