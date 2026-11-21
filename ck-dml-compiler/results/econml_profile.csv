@@ -1,0 +1,9 @@
+function,file,line,calls,self_seconds,share_of_call,rows
+predict,linear_model.py,1632,1,0.033256,0.2319,1000000
+<built-in method _functools.reduce>,~,0,1,0.031767,0.2216,1000000
+conc,utilities.py,390,1,0.022802,0.1590,1000000
+<method 'repeat' of 'numpy.ndarray' objects>,~,0,2,0.022361,0.1560,1000000
+<method 'reduce' of 'numpy.ufunc' objects>,~,0,2,0.013916,0.0971,1000000
+<built-in method numpy._core._multiarray_umath.c_einsum>,~,0,1,0.009669,0.0674,1000000
+effect,_cate_estimator.py,592,1,0.002542,0.0177,1000000
+predict,_rlearner.py,105,1,0.002311,0.0161,1000000

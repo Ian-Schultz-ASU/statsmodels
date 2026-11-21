@@ -1,0 +1,29 @@
+# dmlc: one development container with the whole toolchain
+# Run a command:  ./dev make test          (wrapper around the line below)
+# Same thing:     docker compose -f docker/compose.yaml run --rm dev make test
+# Rebuild image:  docker compose -f docker/compose.yaml build
+
+# Fixed project name, so the image and volume names do not depend on the folder name
+name: dmlc
+
+services:
+
+  # --- Toolchain container: builds dml-opt, runs tests and benchmarks ---
+  dev:
+    image: dmlc-dev
+    build:
+      context: ..                          # repo root, so requirements.txt is reachable
+      dockerfile: docker/Dockerfile.dev
+    platform: linux/amd64                  # native on an Intel Mac, no emulation
+    working_dir: /work
+    volumes:
+      - ..:/work                           # the repo, live-mounted from the Mac
+      - dmlc-build:/build                  # build output, kept out of the repo
+    stdin_open: true                       # keep stdin open for ./dev bash
+    tty: true                              # allocate a terminal
+
+volumes:
+
+  # --- CMake/Ninja build folder, survives between runs ---
+  dmlc-build:
+    name: dmlc-build

@@ -1,0 +1,54 @@
+# Toolchain image for dmlc: everything needed to build, test and benchmark.
+# The repo itself is NOT copied in. compose.yaml mounts it at /work, so edits
+# on the Mac are visible inside the container immediately.
+
+# --- Base stage: Ubuntu with the C++ and MLIR 18 toolchain ---
+# Ubuntu 24.04 ships LLVM/MLIR 18.1.3 as packages, so nothing is built from source
+FROM ubuntu:24.04 AS base
+
+# Install the compiler, build tools, Python, and the MLIR 18 development packages
+#   libmlir-18-dev / llvm-18-dev  : headers and libraries dml-opt links against
+#   mlir-18-tools / llvm-18-tools : mlir-tblgen, mlir-opt, FileCheck, not
+#   libzstd-dev / zlib1g-dev      : compression libraries LLVM links against
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+      build-essential cmake ninja-build make git ca-certificates \
+      python3 python3-venv python3-pip \
+      libmlir-18-dev mlir-18-tools llvm-18-dev llvm-18-tools libzstd-dev zlib1g-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# --- Python stage: install the pinned packages into a virtualenv ---
+FROM base AS python-deps
+
+# Copy only the pin file, so this slow layer is rebuilt only when a pin changes
+COPY requirements.txt /tmp/requirements.txt
+
+# Create the virtualenv (never install into the system Python)
+RUN python3 -m venv /opt/venv
+
+# Install EconML, IREE, NumPy, pytest and matplotlib at their pinned versions
+RUN /opt/venv/bin/pip install --no-cache-dir -r /tmp/requirements.txt
+
+# --- Dev stage: toolchain plus the virtualenv, ready for ./dev ---
+FROM base AS dev
+
+# Bring in the installed virtualenv from the Python stage
+COPY --from=python-deps /opt/venv /opt/venv
+
+# Put the venv and the LLVM tools (FileCheck, not, mlir-opt) on PATH
+ENV PATH="/opt/venv/bin:/usr/lib/llvm-18/bin:$PATH"
+
+# Tell CMake where the MLIR and LLVM packages live
+ENV MLIR_DIR=/usr/lib/llvm-18/lib/cmake/mlir \
+    LLVM_DIR=/usr/lib/llvm-18/lib/cmake/llvm
+
+# Build output goes to /build (a Docker volume), never into the repo folder
+ENV BUILD=/build
+
+# Where the Makefile puts the compiler driver; the Python package reads this
+ENV DML_OPT=/build/tools/dml-opt/dml-opt
+
+# The repo is mounted here by compose.yaml
+WORKDIR /work
+
+# Default to a shell; ./dev passes the real command
+CMD ["bash"]

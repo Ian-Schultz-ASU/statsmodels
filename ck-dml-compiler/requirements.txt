@@ -1,0 +1,19 @@
+# Python packages, pinned to the versions the project was built and tested with.
+# Change a pin only with a reason recorded in docs/DECISIONS.md.
+
+# Arrays and statistics
+numpy==2.5.5
+scipy==1.18.1
+
+# EconML is the external oracle; scikit-learn provides its nuisance models
+scikit-learn==1.9.1
+econml==0.17.1
+
+# IREE turns the lowered MLIR into machine code and runs it.
+# 3.13.0 on purpose: it is the version the team's setup notes vetted.
+iree-base-compiler==3.13.0
+iree-base-runtime==3.13.0
+
+# Tests and figures
+pytest==9.2.0
+matplotlib==3.11.2
