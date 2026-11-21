@@ -45,7 +45,11 @@ def lower_mlir(mlir_text: str, ci_opt_path: str | Path = "ci-opt") -> str:
     return completed.stdout
 
 
-def compile_iree(lowered_mlir: str, target_cpu: str = "host") -> bytes:
+def compile_iree(
+    lowered_mlir: str,
+    target_cpu: str = "host",
+    enable_ukernels: bool = True,
+) -> bytes:
     """Compile lowered Linalg MLIR to an IREE CPU flatbuffer.
 
     Parameters
@@ -54,6 +58,8 @@ def compile_iree(lowered_mlir: str, target_cpu: str = "host") -> bytes:
         Lowered MLIR module text (e.g. from :func:`lower_mlir`).
     target_cpu : str, optional
         Target CPU passed to ``--iree-llvmcpu-target-cpu``.
+    enable_ukernels : bool, optional
+        Enable IREE's built-in CPU microkernels (``--iree-llvmcpu-enable-ukernels=all``).
 
     Returns
     -------
@@ -75,6 +81,8 @@ def compile_iree(lowered_mlir: str, target_cpu: str = "host") -> bytes:
         "--iree-llvmcpu-loop-vectorization",
         "--iree-llvmcpu-slp-vectorization",
     ]
+    if enable_ukernels:
+        extra_args.append("--iree-llvmcpu-enable-ukernels=all")
     return compile_str(
         lowered_mlir,
         target_backends=["llvm-cpu"],
